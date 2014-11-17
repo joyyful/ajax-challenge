@@ -1,13 +1,44 @@
-@import url(http://fonts.googleapis.com/css?family=Ubuntu:400,500);
-
 body {
-    font-family: 'Ubuntu', 'Helvetica Neue', 'Helvetica', sans-serif;
+    font-family: 'Helvetica Neue', 'Helvetica', sans-serif;
     font-weight: 400;
+    margin-right: 20%;
+    margin-left: 20%;
 }
 
-.product-picture {
-    float: left;
-    height: 130px;
-    margin-right: 10px;
+main {
+    margin-top: 20px;
+    margin-bottom: 20px;
 }
 
+#product {
+    background-color: #6A8FFF;
+    border: solid black 3px;
+    border-radius: 40px;
+    padding-bottom: 20px;
+    box-shadow: 10px 10px 5px #888888;
+}
+
+.productPic {
+    height: 140px;
+    box-shadow: 5px 5px 5px #1F1F1F;
+    margin-top: 30px;
+    margin-left: 10px;
+}
+
+h1 {
+    font-family: 'Brush Script MT', cursive;
+    font-size: 40px;
+}
+
+#submit, #refresh {
+    text-align: center;
+}
+
+.deleted {
+    color: gray;
+    text-decoration: line-through;
+}
+
+.commentsExist {
+    display: none;
+}
