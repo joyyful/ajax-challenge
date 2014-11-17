@@ -9,25 +9,9 @@ angular.module('ReviewPage', ['ui.bootstrap'])
     })
 
     .controller('CommentsController', function($scope, $http) {
-        //Initialize new Review object
         $scope.newReview = {deleted: false};
 
-        $scope.refreshReviews = function() {
-            $http.get(reviewUrl + '?where={"deleted":false}')
-                .success(function(data) {
-                    $scope.reviews = data.results.sort($scope.compare);
-                    if($scope.reviews.length == 0) {
-                        document.getElementById('noComments').className = 'noComments';
-                    } else {
-                        document.getElementById('noComments').className = 'commentsExist';
-                    }
-                });
-        }
-
-        //Refresh upon load
-        $scope.refreshReviews();
-
-        //Adds a review to the list
+        //Adds a review comment to the list
         $scope.addComment = function() {
             $scope.inserting = true;
             $http.post(reviewUrl, $scope.newReview)
@@ -37,19 +21,34 @@ angular.module('ReviewPage', ['ui.bootstrap'])
                     $scope.newReview = {deleted: false};
                 })
                 .finally(function() {
-                    document.getElementById('noComments').className = 'commentsExist';
+                    document.getElementById('noComments').className = 'yesComments';
                     $scope.inserting = false;
                 });
         }
 
-        //Updates a review
+        //Updates the review list with new reviews
         $scope.updateReview = function(review) {
             $http.put(reviewUrl + '/' + review.objectId, review)
         };
 
-        //Changes order of reviews based on amount of votes
+        //Refreshes the ordering of reviews upon load based on votes
+        $scope.refreshReviews = function() {
+            $http.get(reviewUrl + '?where={"deleted":false}')
+                .success(function(data) {
+                    $scope.reviews = data.results.sort($scope.compare);
+                    if($scope.reviews.length == 0) {
+                        document.getElementById('noComments').className = 'noComments';
+                    } else {
+                        document.getElementById('noComments').className = 'yesComments';
+                    }
+                });
+        }
+
+        $scope.refreshReviews();
+
+        //Changes the amount of votes for each review comment
         $scope.incrementVotes = function(review, amount) {
-            var postData = {
+            var amtVotes = {
                 score: {
                     __op: "Increment",
                     amount: amount
@@ -57,10 +56,10 @@ angular.module('ReviewPage', ['ui.bootstrap'])
             };
             $scope.updating = true;
             if (amount == 1 || (amount == -1 && review.score > 0)) {
-                $http.put(reviewUrl + '/' + review.objectId, postData)
-                    .success(function(respData) {
-                        if (respData.score >= 0) {
-                            review.score = respData.score;
+                $http.put(reviewUrl + '/' + review.objectId, amtVotes)
+                    .success(function(responseData) {
+                        if (responseData.score >= 0) {
+                            review.score = responseData.score;
                         }
                     })
                     .error(function(err) {
@@ -72,6 +71,7 @@ angular.module('ReviewPage', ['ui.bootstrap'])
             }
         }
 
+        //Compares the amount of votes in order to change the review list order
         $scope.compare = function(initialReview, nextReview) {
             if (initialReview.score > nextReview.score) {
                 return -1;
